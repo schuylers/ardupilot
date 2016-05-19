@@ -86,9 +86,14 @@ void Plane::stabilize_roll(float speed_scaler)
                                                 speed_scaler,
                                                 disable_integrator);
     // TODO math to remap goal into range [-4500, 4500]
-    channel_roll->set_servo_out(roll);
-    channel_roll2->set_servo_out(-roll);
-    //hal.uartA->printf("nav roll: %d\tahrs: %d\tresult: %d\n", nav_roll_cd, ahrs.roll_sensor, roll);
+    roll = -roll;
+    channel_roll2->set_servo_out(roll-500);
+    channel_roll2->calc_pwm();
+    channel_roll2->output();
+    channel_roll3->set_servo_out(roll-3800);
+    channel_roll3->calc_pwm();
+    channel_roll3->output();
+    hal.uartA->printf("roll: %d  \tset: %d   \t", ahrs.roll_sensor, roll);
 }
 
 /*
@@ -110,9 +115,17 @@ void Plane::stabilize_pitch(float speed_scaler)
     if (control_mode == STABILIZE && channel_pitch->get_control_in() != 0) {
         disable_integrator = true;
     }
-    channel_pitch->set_servo_out(pitchController.get_servo_out(demanded_pitch - ahrs.pitch_sensor,
+    int32_t pitch = pitchController.get_servo_out(demanded_pitch - ahrs.pitch_sensor,
                                                              speed_scaler,
-                                                             disable_integrator));
+                                                             disable_integrator);
+    pitch /= 2;
+    channel_pitch3->set_servo_out(-pitch);
+    channel_pitch3->calc_pwm();
+    channel_pitch3->output();
+    channel_pitch2->set_servo_out(pitch);
+    channel_pitch2->calc_pwm();
+    channel_pitch2->output();
+    hal.uartA->printf("pitch: %d \tset: %d   \n", ahrs.pitch_sensor, pitch);
 }
 
 /*

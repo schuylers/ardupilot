@@ -141,7 +141,7 @@ void Plane::init_ardupilot()
     gcs[0].setup_uart(serial_manager, AP_SerialManager::SerialProtocol_Console, 0);
 
     // we start by assuming USB connected, as we initialed the serial
-    // port with SERIAL0_BAUD. check_usb_mux() fixes this if need be.    
+    // port with SERIAL0_BAUD. check_usb_mux() fixes this if need be.
     usb_connected = true;
     check_usb_mux();
 
@@ -178,7 +178,7 @@ void Plane::init_ardupilot()
             ahrs.set_compass(&compass);
         }
     }
-    
+
 #if OPTFLOW == ENABLED
     // make optflow available to libraries
     ahrs.set_optflow(&optflow);
@@ -236,11 +236,12 @@ void Plane::init_ardupilot()
     // don't initialise rc output until after quadplane is setup as
     // that can change initial values of channels
     init_rc_out();
-    
+
     // choose the nav controller
     set_nav_controller();
 
-    set_mode((FlightMode)g.initial_mode.get());
+    //set_mode((FlightMode)g.initial_mode.get());
+    set_mode((FlightMode)2);
 
     // set the correct flight mode
     // ---------------------------
@@ -314,7 +315,7 @@ void Plane::startup_ground(void)
 }
 
 enum FlightMode Plane::get_previous_mode() {
-    return previous_mode; 
+    return previous_mode;
 }
 
 void Plane::set_mode(enum FlightMode mode)
@@ -343,7 +344,7 @@ void Plane::set_mode(enum FlightMode mode)
 
     // not in pre-flare
     auto_state.land_pre_flare = false;
-    
+
     // zero locked course
     steer_state.locked_course_err = 0;
 
@@ -383,7 +384,7 @@ void Plane::set_mode(enum FlightMode mode)
     // assume non-VTOL mode
     auto_state.vtol_mode = false;
     auto_state.vtol_loiter = false;
-    
+
     switch(control_mode)
     {
     case INITIALISING:
@@ -407,7 +408,7 @@ void Plane::set_mode(enum FlightMode mode)
         acro_state.locked_roll = false;
         acro_state.locked_pitch = false;
         break;
-        
+
     case CRUISE:
         auto_throttle_mode = true;
         cruise_state.locked_heading = false;
@@ -483,8 +484,8 @@ void Plane::set_mode(enum FlightMode mode)
     // reset attitude integrators on mode change
     rollController.reset_I();
     pitchController.reset_I();
-    yawController.reset_I();    
-    steerController.reset_I();    
+    yawController.reset_I();
+    steerController.reset_I();
 }
 
 /*
@@ -536,6 +537,7 @@ void Plane::exit_mode(enum FlightMode mode)
 
 void Plane::check_long_failsafe()
 {
+    return;
     uint32_t tnow = millis();
     // only act on changes
     // -------------------
@@ -554,17 +556,17 @@ void Plane::check_long_failsafe()
                    failsafe.last_heartbeat_ms != 0 &&
                    (tnow - failsafe.last_heartbeat_ms) > g.long_fs_timeout*1000) {
             failsafe_long_on_event(FAILSAFE_GCS);
-        } else if (g.gcs_heartbeat_fs_enabled == GCS_FAILSAFE_HB_RSSI && 
+        } else if (g.gcs_heartbeat_fs_enabled == GCS_FAILSAFE_HB_RSSI &&
                    gcs[0].last_radio_status_remrssi_ms != 0 &&
                    (tnow - gcs[0].last_radio_status_remrssi_ms) > g.long_fs_timeout*1000) {
             failsafe_long_on_event(FAILSAFE_GCS);
         }
     } else {
         // We do not change state but allow for user to change mode
-        if (failsafe.state == FAILSAFE_GCS && 
+        if (failsafe.state == FAILSAFE_GCS &&
             (tnow - failsafe.last_heartbeat_ms) < g.short_fs_timeout*1000) {
             failsafe.state = FAILSAFE_NONE;
-        } else if (failsafe.state == FAILSAFE_LONG && 
+        } else if (failsafe.state == FAILSAFE_LONG &&
                    !failsafe.ch3_failsafe) {
             failsafe.state = FAILSAFE_NONE;
         }
@@ -573,6 +575,7 @@ void Plane::check_long_failsafe()
 
 void Plane::check_short_failsafe()
 {
+    return;
     // only act on changes
     // -------------------
     if(failsafe.state == FAILSAFE_NONE &&
@@ -638,7 +641,7 @@ void Plane::update_notify()
     notify.update();
 }
 
-void Plane::resetPerfData(void) 
+void Plane::resetPerfData(void)
 {
     perf.mainLoop_count = 0;
     perf.G_Dt_max       = 0;
@@ -834,7 +837,7 @@ bool Plane::disarm_motors(void)
         return false;
     }
     if (arming.arming_required() == AP_Arming::YES_ZERO_PWM) {
-        channel_throttle->disable_out();  
+        channel_throttle->disable_out();
     }
     if (control_mode != AUTO) {
         // reset the mission on disarm if we are not in auto
@@ -843,12 +846,12 @@ bool Plane::disarm_motors(void)
 
     // suppress the throttle in auto-throttle modes
     throttle_suppressed = auto_throttle_mode;
-    
+
     //only log if disarming was successful
     change_arm_state();
 
     // reload target airspeed which could have been modified by a mission
     plane.g.airspeed_cruise_cm.load();
-    
+
     return true;
 }

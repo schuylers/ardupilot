@@ -17,14 +17,21 @@ void Plane::set_control_channels(void)
     //} else {
         channel_roll     = RC_Channel::rc_channel(rcmap.roll()-1);
         channel_roll2    = RC_Channel::rc_channel(rcmap.roll());
+        channel_roll3    = RC_Channel::rc_channel(rcmap.roll()+1);
     //}
     channel_pitch    = RC_Channel::rc_channel(rcmap.pitch()-1);
+    channel_pitch2   = RC_Channel::rc_channel(rcmap.pitch());
+    channel_pitch3   = RC_Channel::rc_channel(rcmap.pitch()+1);
     channel_throttle = RC_Channel::rc_channel(rcmap.throttle()-1);
     channel_rudder   = RC_Channel::rc_channel(rcmap.yaw()-1);
 
     // set rc channel ranges
     channel_roll->set_angle(SERVO_MAX);
+    channel_roll2->set_angle(SERVO_MAX);
+    channel_roll3->set_angle(SERVO_MAX);
     channel_pitch->set_angle(SERVO_MAX);
+    channel_pitch2->set_angle(SERVO_MAX);
+    channel_pitch3->set_angle(SERVO_MAX);
     channel_rudder->set_angle(SERVO_MAX);
     if (aparm.throttle_min >= 0) {
         // normal operation
@@ -50,7 +57,11 @@ void Plane::init_rc_in()
 {
     // set rc dead zones
     channel_roll->set_default_dead_zone(30);
+    channel_roll2->set_default_dead_zone(30);
+    channel_roll3->set_default_dead_zone(30);
     channel_pitch->set_default_dead_zone(30);
+    channel_pitch2->set_default_dead_zone(30);
+    channel_pitch3->set_default_dead_zone(30);
     channel_rudder->set_default_dead_zone(30);
     channel_throttle->set_default_dead_zone(30);
 }
@@ -61,14 +72,19 @@ void Plane::init_rc_in()
 void Plane::init_rc_out()
 {
     channel_roll->enable_out();
+    channel_roll2->enable_out();
+    channel_roll3->enable_out();
     channel_pitch->enable_out();
+    channel_pitch2->enable_out();
+    channel_pitch3->enable_out();
 
     /*
       change throttle trim to minimum throttle. This prevents a
       configuration error where the user sets CH3_TRIM incorrectly and
       the motor may start on power up
      */
-    channel_throttle->set_radio_trim(throttle_min());
+    //channel_throttle->set_radio_trim(throttle_min());
+    channel_throttle->set_radio_trim(1500);
 
     if (arming.arming_required() != AP_Arming::YES_ZERO_PWM) {
         channel_throttle->enable_out();
@@ -190,12 +206,20 @@ void Plane::read_radio()
         // in training mode we don't want to use a deadzone, as we
         // want manual pass through when not exceeding attitude limits
         channel_roll->set_pwm_no_deadzone(pwm_roll);
+        channel_roll2->set_pwm_no_deadzone(pwm_roll);
+        channel_roll3->set_pwm_no_deadzone(pwm_roll);
         channel_pitch->set_pwm_no_deadzone(pwm_pitch);
+        channel_pitch2->set_pwm_no_deadzone(-pwm_pitch);
+        channel_pitch3->set_pwm_no_deadzone(-pwm_pitch);
         channel_throttle->set_pwm_no_deadzone(channel_throttle->read());
         channel_rudder->set_pwm_no_deadzone(channel_rudder->read());
     } else {
         channel_roll->set_pwm(pwm_roll);
+        channel_roll2->set_pwm(pwm_roll);
+        channel_roll3->set_pwm(pwm_roll);
         channel_pitch->set_pwm(pwm_pitch);
+        channel_pitch2->set_pwm(pwm_pitch);
+        channel_pitch3->set_pwm(pwm_pitch);
     }
 
     control_failsafe(channel_throttle->get_radio_in());
@@ -230,7 +254,7 @@ void Plane::read_radio()
 
 void Plane::control_failsafe(uint16_t pwm)
 {
-    if (millis() - failsafe.last_valid_rc_ms > 1000 || rc_failsafe_active()) {
+    if (rc_failsafe_active()) {
         // we do not have valid RC input. Set all primary channel
         // control inputs to the trim value and throttle to min
         channel_roll->set_radio_in(channel_roll->get_radio_trim());
@@ -348,6 +372,7 @@ void Plane::trim_radio()
  */
 bool Plane::rc_failsafe_active(void)
 {
+    return false;
     if (!g.throttle_fs_enabled) {
         return false;
     }
