@@ -10,13 +10,14 @@
  */
 void Plane::set_control_channels(void)
 {
-    if (g.rudder_only) {
+    //if (g.rudder_only) {
         // in rudder only mode the roll and rudder channels are the
         // same.
-        channel_roll     = RC_Channel::rc_channel(rcmap.yaw()-1);
-    } else {
+    //    channel_roll     = RC_Channel::rc_channel(rcmap.yaw()-1);
+    //} else {
         channel_roll     = RC_Channel::rc_channel(rcmap.roll()-1);
-    }
+        channel_roll2    = RC_Channel::rc_channel(rcmap.roll());
+    //}
     channel_pitch    = RC_Channel::rc_channel(rcmap.pitch()-1);
     channel_throttle = RC_Channel::rc_channel(rcmap.throttle()-1);
     channel_rudder   = RC_Channel::rc_channel(rcmap.yaw()-1);
@@ -68,7 +69,7 @@ void Plane::init_rc_out()
       the motor may start on power up
      */
     channel_throttle->set_radio_trim(throttle_min());
-    
+
     if (arming.arming_required() != AP_Arming::YES_ZERO_PWM) {
         channel_throttle->enable_out();
     }
@@ -80,7 +81,7 @@ void Plane::init_rc_out()
     RC_Channel::output_trim_all();
 
     // setup PWM values to send if the FMU firmware dies
-    RC_Channel::setup_failsafe_trim_all();  
+    RC_Channel::setup_failsafe_trim_all();
 
     // setup PX4 to output the min throttle when safety off if arming
     // is setup for min on disarm
@@ -110,7 +111,7 @@ void Plane::rudder_arm_disarm_check()
     // if not in a manual throttle mode then disallow rudder arming/disarming
     if (auto_throttle_mode ) {
         rudder_arm_timer = 0;
-        return;      
+        return;
     }
 
 	if (!arming.is_armed()) {
@@ -177,14 +178,14 @@ void Plane::read_radio()
         pwm_roll = elevon.ch1_temp;
         pwm_pitch = elevon.ch2_temp;
     }else{
-        pwm_roll = BOOL_TO_SIGN(g.reverse_elevons) * (BOOL_TO_SIGN(g.reverse_ch2_elevon) * int16_t(elevon.ch2_temp - elevon.trim2) 
+        pwm_roll = BOOL_TO_SIGN(g.reverse_elevons) * (BOOL_TO_SIGN(g.reverse_ch2_elevon) * int16_t(elevon.ch2_temp - elevon.trim2)
          - BOOL_TO_SIGN(g.reverse_ch1_elevon) * int16_t(elevon.ch1_temp - elevon.trim1)) / 2 + 1500;
-        pwm_pitch = (BOOL_TO_SIGN(g.reverse_ch2_elevon) * int16_t(elevon.ch2_temp - elevon.trim2) 
+        pwm_pitch = (BOOL_TO_SIGN(g.reverse_ch2_elevon) * int16_t(elevon.ch2_temp - elevon.trim2)
          + BOOL_TO_SIGN(g.reverse_ch1_elevon) * int16_t(elevon.ch1_temp - elevon.trim1)) / 2 + 1500;
     }
 
     RC_Channel::set_pwm_all();
-    
+
     if (control_mode == TRAINING) {
         // in training mode we don't want to use a deadzone, as we
         // want manual pass through when not exceeding attitude limits

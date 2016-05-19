@@ -20,7 +20,7 @@ const AP_Param::GroupInfo RCMapper::var_info[] = {
     // @Increment: 1
     // @User: Advanced
     // @RebootRequired: True
-    AP_GROUPINFO("PITCH",       1, RCMapper, _ch_pitch, 2),
+    AP_GROUPINFO("PITCH",       1, RCMapper, _ch_pitch, 3),
 
     // @Param: THROTTLE
     // @DisplayName: Throttle channel
@@ -29,7 +29,7 @@ const AP_Param::GroupInfo RCMapper::var_info[] = {
     // @Increment: 1
     // @User: Advanced
     // @RebootRequired: True
-    AP_GROUPINFO("THROTTLE",    2, RCMapper, _ch_throttle, 3),
+    AP_GROUPINFO("THROTTLE",    2, RCMapper, _ch_throttle, 4),
 
     // @Param: YAW
     // @DisplayName: Yaw channel
@@ -38,7 +38,7 @@ const AP_Param::GroupInfo RCMapper::var_info[] = {
     // @Increment: 1
     // @User: Advanced
     // @RebootRequired: True
-    AP_GROUPINFO("YAW",         3, RCMapper, _ch_yaw, 4),
+    AP_GROUPINFO("YAW",         3, RCMapper, _ch_yaw, 5),
 
     AP_GROUPEND
 };

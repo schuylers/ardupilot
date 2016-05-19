@@ -1,0 +1,6 @@
+
+
+mavproxy.py --master=/dev/tty.usbmodem1
+
+make px4-v2
+make px4-v2-upload
