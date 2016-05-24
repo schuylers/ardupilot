@@ -87,7 +87,7 @@ void Plane::stabilize_roll(float speed_scaler)
                                                 disable_integrator);
     // TODO math to remap goal into range [-4500, 4500]
     roll = -roll;
-    channel_roll2->set_servo_out(roll-500);
+    channel_roll2->set_servo_out(roll-1000);
     channel_roll2->calc_pwm();
     channel_roll2->output();
     channel_roll3->set_servo_out(roll-3800);
@@ -119,6 +119,7 @@ void Plane::stabilize_pitch(float speed_scaler)
                                                              speed_scaler,
                                                              disable_integrator);
     pitch /= 2;
+    pitch += 1000;
     channel_pitch3->set_servo_out(-pitch);
     channel_pitch3->calc_pwm();
     channel_pitch3->output();
