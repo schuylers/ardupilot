@@ -160,11 +160,11 @@ private:
 
     // primary control channels
     RC_Channel *channel_roll;
-    RC_Channel *channel_roll2;
-    RC_Channel *channel_roll3;
+    RC_Channel *channel_port_foil;
+    RC_Channel *channel_star_foil;
     RC_Channel *channel_pitch;
-    RC_Channel *channel_pitch2;
-    RC_Channel *channel_pitch3;
+    RC_Channel *channel_star_rudder;
+    RC_Channel *channel_port_rudder;
     RC_Channel *channel_throttle;
     RC_Channel *channel_rudder;
 

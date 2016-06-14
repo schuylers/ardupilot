@@ -47,7 +47,7 @@ const AP_Param::GroupInfo AP_RollController::var_info[] = {
 	// @Range: 0 0.1
 	// @Increment: 0.01
 	// @User: User
-	AP_GROUPINFO("D",        2, AP_RollController, gains.D,        0.02f),
+	AP_GROUPINFO("D",        2, AP_RollController, gains.D,        0.f),
 
 	// @Param: I
 	// @DisplayName: Integrator Gain
@@ -55,7 +55,7 @@ const AP_Param::GroupInfo AP_RollController::var_info[] = {
 	// @Range: 0 1.0
 	// @Increment: 0.05
 	// @User: User
-	AP_GROUPINFO("I",        3, AP_RollController, gains.I,        0.1f),
+	AP_GROUPINFO("I",        3, AP_RollController, gains.I,        0.f),
 
 	// @Param: RMAX
 	// @DisplayName: Maximum Roll Rate

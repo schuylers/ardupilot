@@ -16,22 +16,22 @@ void Plane::set_control_channels(void)
     //    channel_roll     = RC_Channel::rc_channel(rcmap.yaw()-1);
     //} else {
         channel_roll     = RC_Channel::rc_channel(rcmap.roll()-1);
-        channel_roll2    = RC_Channel::rc_channel(rcmap.roll());
-        channel_roll3    = RC_Channel::rc_channel(rcmap.roll()+1);
+        channel_port_foil    = RC_Channel::rc_channel(rcmap.roll());
+        channel_star_foil    = RC_Channel::rc_channel(rcmap.roll()+1);
     //}
     channel_pitch    = RC_Channel::rc_channel(rcmap.pitch()-1);
-    channel_pitch2   = RC_Channel::rc_channel(rcmap.pitch());
-    channel_pitch3   = RC_Channel::rc_channel(rcmap.pitch()+1);
+    channel_port_rudder   = RC_Channel::rc_channel(rcmap.pitch());
+    channel_star_rudder   = RC_Channel::rc_channel(rcmap.pitch()+1);
     channel_throttle = RC_Channel::rc_channel(rcmap.throttle()-1);
     channel_rudder   = RC_Channel::rc_channel(rcmap.yaw()-1);
 
     // set rc channel ranges
     channel_roll->set_angle(SERVO_MAX);
-    channel_roll2->set_angle(SERVO_MAX);
-    channel_roll3->set_angle(SERVO_MAX);
+    channel_port_foil->set_angle(SERVO_MAX);
+    channel_star_foil->set_angle(SERVO_MAX);
     channel_pitch->set_angle(SERVO_MAX);
-    channel_pitch2->set_angle(SERVO_MAX);
-    channel_pitch3->set_angle(SERVO_MAX);
+    channel_port_rudder->set_angle(SERVO_MAX);
+    channel_star_rudder->set_angle(SERVO_MAX);
     channel_rudder->set_angle(SERVO_MAX);
     if (aparm.throttle_min >= 0) {
         // normal operation
@@ -57,11 +57,11 @@ void Plane::init_rc_in()
 {
     // set rc dead zones
     channel_roll->set_default_dead_zone(30);
-    channel_roll2->set_default_dead_zone(30);
-    channel_roll3->set_default_dead_zone(30);
+    channel_port_foil->set_default_dead_zone(30);
+    channel_star_foil->set_default_dead_zone(30);
     channel_pitch->set_default_dead_zone(30);
-    channel_pitch2->set_default_dead_zone(30);
-    channel_pitch3->set_default_dead_zone(30);
+    channel_port_rudder->set_default_dead_zone(30);
+    channel_star_rudder->set_default_dead_zone(30);
     channel_rudder->set_default_dead_zone(30);
     channel_throttle->set_default_dead_zone(30);
 }
@@ -72,11 +72,11 @@ void Plane::init_rc_in()
 void Plane::init_rc_out()
 {
     channel_roll->enable_out();
-    channel_roll2->enable_out();
-    channel_roll3->enable_out();
+    channel_port_foil->enable_out();
+    channel_star_foil->enable_out();
     channel_pitch->enable_out();
-    channel_pitch2->enable_out();
-    channel_pitch3->enable_out();
+    channel_port_rudder->enable_out();
+    channel_star_rudder->enable_out();
 
     /*
       change throttle trim to minimum throttle. This prevents a
@@ -206,20 +206,20 @@ void Plane::read_radio()
         // in training mode we don't want to use a deadzone, as we
         // want manual pass through when not exceeding attitude limits
         channel_roll->set_pwm_no_deadzone(pwm_roll);
-        channel_roll2->set_pwm_no_deadzone(pwm_roll);
-        channel_roll3->set_pwm_no_deadzone(pwm_roll);
+        channel_port_foil->set_pwm_no_deadzone(pwm_roll);
+        channel_star_foil->set_pwm_no_deadzone(pwm_roll);
         channel_pitch->set_pwm_no_deadzone(pwm_pitch);
-        channel_pitch2->set_pwm_no_deadzone(-pwm_pitch);
-        channel_pitch3->set_pwm_no_deadzone(-pwm_pitch);
+        channel_port_rudder->set_pwm_no_deadzone(-pwm_pitch);
+        channel_star_rudder->set_pwm_no_deadzone(-pwm_pitch);
         channel_throttle->set_pwm_no_deadzone(channel_throttle->read());
         channel_rudder->set_pwm_no_deadzone(channel_rudder->read());
     } else {
         channel_roll->set_pwm(pwm_roll);
-        channel_roll2->set_pwm(pwm_roll);
-        channel_roll3->set_pwm(pwm_roll);
+        channel_port_foil->set_pwm(pwm_roll);
+        channel_star_foil->set_pwm(pwm_roll);
         channel_pitch->set_pwm(pwm_pitch);
-        channel_pitch2->set_pwm(pwm_pitch);
-        channel_pitch3->set_pwm(pwm_pitch);
+        channel_port_rudder->set_pwm(pwm_pitch);
+        channel_star_rudder->set_pwm(pwm_pitch);
     }
 
     control_failsafe(channel_throttle->get_radio_in());

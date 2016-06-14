@@ -47,7 +47,7 @@ const AP_Param::GroupInfo AP_PitchController::var_info[] = {
 	// @Range: 0 0.1
 	// @Increment: 0.01
 	// @User: User
-	AP_GROUPINFO("D",        2, AP_PitchController, gains.D,        0.02f),
+	AP_GROUPINFO("D",        2, AP_PitchController, gains.D,        0.f),
 
 	// @Param: I
 	// @DisplayName: Integrator Gain
@@ -55,7 +55,7 @@ const AP_Param::GroupInfo AP_PitchController::var_info[] = {
 	// @Range: 0 0.5
 	// @Increment: 0.05
 	// @User: User
-	AP_GROUPINFO("I",        3, AP_PitchController, gains.I,        0.15f),
+	AP_GROUPINFO("I",        3, AP_PitchController, gains.I,        0.f),
 
 	// @Param: RMAX_UP
 	// @DisplayName: Pitch up max rate

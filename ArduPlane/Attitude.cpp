@@ -87,12 +87,21 @@ void Plane::stabilize_roll(float speed_scaler)
                                                 disable_integrator);
     // TODO math to remap goal into range [-4500, 4500]
     roll = -roll;
-    channel_roll2->set_servo_out(roll-1000);
-    channel_roll2->calc_pwm();
-    channel_roll2->output();
-    channel_roll3->set_servo_out(roll-3800);
-    channel_roll3->calc_pwm();
-    channel_roll3->output();
+    float bias_degrees = 2;  // XXX
+    int bias = 250*bias_degrees;
+    // port: center 0, aft 3500, fore -4500
+    // 0 -> 0deg, -3500 -> +13deg
+    //channel_port_foil->set_servo_out(roll-1500);
+    channel_port_foil->set_servo_out(roll - 1000 - bias);
+    channel_port_foil->calc_pwm();
+    channel_port_foil->output();
+    // starboard: center -4000, aft X, fore Y
+    // XXX -> 0deg, XXXX -> +13deg
+    //channel_star_foil->set_servo_out(roll-3300);
+    channel_star_foil->set_servo_out(roll + 750 + bias);
+    //channel_star_foil->set_servo_out(0);
+    channel_star_foil->calc_pwm();
+    channel_star_foil->output();
     hal.uartA->printf("roll: %d  \tset: %d   \t", ahrs.roll_sensor, roll);
 }
 
@@ -119,13 +128,16 @@ void Plane::stabilize_pitch(float speed_scaler)
                                                              speed_scaler,
                                                              disable_integrator);
     pitch /= 2;
-    pitch += 1000;
-    channel_pitch3->set_servo_out(-pitch);
-    channel_pitch3->calc_pwm();
-    channel_pitch3->output();
-    channel_pitch2->set_servo_out(pitch);
-    channel_pitch2->calc_pwm();
-    channel_pitch2->output();
+    // -250-> 0deg, 0 -> -1deg, 1000 -> -5deg (aft)
+    float bias_degrees = -2;  // XXXro
+    int bias = 250*bias_degrees;
+    //pitch = 0;
+    channel_star_rudder->set_servo_out(bias - pitch - 200);
+    channel_star_rudder->calc_pwm();
+    channel_star_rudder->output();
+    channel_port_rudder->set_servo_out(-bias + pitch + 200);
+    channel_port_rudder->calc_pwm();
+    channel_port_rudder->output();
     hal.uartA->printf("pitch: %d \tset: %d   \n", ahrs.pitch_sensor, pitch);
 }
 
